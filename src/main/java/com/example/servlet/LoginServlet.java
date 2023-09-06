@@ -20,11 +20,13 @@ public class LoginServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         HttpSession session = request.getSession();
-        String user = Optional.ofNullable((String) session.getAttribute("user")).orElse("");
-        if (user.isEmpty()) {
-            request.getRequestDispatcher("/user/hello.jsp").forward(request, response);
-        } else {
-            request.getRequestDispatcher("/login.jsp").forward(request, response);
+        if (session != null) {
+            String user = Optional.ofNullable((String) session.getAttribute("user")).orElse("");
+            if (user.isEmpty()) {
+                request.getRequestDispatcher("/login.jsp").forward(request, response);
+            } else {
+                request.getRequestDispatcher("/user/hello.jsp").forward(request, response);
+            }
         }
     }
 
@@ -38,10 +40,13 @@ public class LoginServlet extends HttpServlet {
         if (name != null && password != null && password.length() > 0) {
             Users users = Users.getInstance();
             Optional<String> stringOptional = users.getUsers().stream().filter(s -> s.equals(name)).findAny();
-            request.getSession().setAttribute("user", name);
-            if (stringOptional.isPresent()) {
+            HttpSession session = request.getSession();
+            if (session != null) {
+                session.setAttribute("user", name);
+                if (stringOptional.isPresent()) {
 //                response.sendRedirect(request.getContextPath() + "/user/hello");
-                requestDispatcher = request.getRequestDispatcher("/user/hello.jsp");
+                    requestDispatcher = request.getRequestDispatcher("/user/hello.jsp");
+                }
             }
         }
 //        response.sendRedirect(request.getContextPath() +"/user/hello.jsp");
