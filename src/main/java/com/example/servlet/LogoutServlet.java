@@ -12,16 +12,15 @@ import java.io.IOException;
 public class LogoutServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        if (request != null && response != null) {
-            HttpSession session = request.getSession(false);
-            if (session != null) {
-                String user = (String) session.getAttribute("user");
-                if (user != null) {
-                    session.removeAttribute("user");
-                    session.invalidate();
-                }
+        HttpSession session = request.getSession(false);
+        if (session != null) {
+            String user = (String) session.getAttribute("user");
+            if (user != null) {
+                session.removeAttribute("user");
+                session.invalidate();
             }
-            request.getRequestDispatcher("/login.jsp").forward(request, response);
         }
+        request.getRequestDispatcher("/login.jsp").forward(request, response);
+
     }
 }
