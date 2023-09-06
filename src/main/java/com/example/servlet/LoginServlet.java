@@ -20,7 +20,7 @@ public class LoginServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         if (request != null && response != null) {
-            HttpSession session = request.getSession();
+            HttpSession session = request.getSession(false);
             if (session != null) {
                 String user = Optional.ofNullable((String) session.getAttribute("user")).orElse("");
                 if (user.isEmpty()) {
@@ -43,7 +43,7 @@ public class LoginServlet extends HttpServlet {
             if (name != null && password != null && password.length() > 0) {
                 Users users = Users.getInstance();
                 Optional<String> stringOptional = users.getUsers().stream().filter(s -> s.equals(name)).findAny();
-                HttpSession session = request.getSession();
+                HttpSession session = request.getSession(false);
                 if (session != null) {
                     session.setAttribute("user", name);
                     if (stringOptional.isPresent()) {
