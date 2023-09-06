@@ -19,19 +19,13 @@ public class LoginServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        request.getRequestDispatcher("login.jsp").forward(request, response);
         HttpSession session = request.getSession();
-        RequestDispatcher requestDispatcher;
-        String user = (String) session.getAttribute("user");
-
-        if (user != null) {
-            requestDispatcher = request.getRequestDispatcher("/login.jsp");
+        String user = Optional.ofNullable((String) session.getAttribute("user")).orElse("");
+        if (user.isEmpty()) {
+            request.getRequestDispatcher("/user/hello.jsp").forward(request, response);
         } else {
-            requestDispatcher = request.getRequestDispatcher("/user/hello.jsp");
-
-
+            request.getRequestDispatcher("/login.jsp").forward(request, response);
         }
-        requestDispatcher.forward(request, response);
     }
 
     @Override
@@ -41,7 +35,7 @@ public class LoginServlet extends HttpServlet {
         String password = request.getParameter("password");
         RequestDispatcher requestDispatcher;
         requestDispatcher = request.getRequestDispatcher("/login.jsp");
-        if (name != null && password != null && password.trim().length() > 0) {
+        if (name != null && password != null && password.length() > 0) {
             Users users = Users.getInstance();
             Optional<String> stringOptional = users.getUsers().stream().filter(s -> s.equals(name)).findAny();
             request.getSession().setAttribute("user", name);
